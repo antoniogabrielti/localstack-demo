@@ -1,0 +1,22 @@
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: sa-east-1
+      auto: false
+    credentials:
+      access-key: 123
+      secret-key: abc
+    sqs:
+      enabled: true
+      region: sa-east-1
+      endpoint: http://localhost:4566
+    queue:
+      name: teste
+
+logging:
+  level:
+    com.example.localstackdemo: info
+    root: error

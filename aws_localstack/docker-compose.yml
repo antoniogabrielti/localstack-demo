@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    environment:
+      AWS_DEFAULT_REGION: sa-east-1
+      EDGE_PORT: 4566
+      DEBUG: 1
+      SERVICES: sqs, sns
+    ports:
+      - '4566-4597:4566-4597'
+      - '8055:8080'
+    volumes:
+      - ./data/localstack/var/lib/localstack:/var/lib/localstack
+      - ./data/localstack/var/run/docker.sock:/var/run/docker.sock
+
+
+# esse docker compose foi baseado em : https://onexlab-io.medium.com/localstack-sns-to-sqs-47a38f33b8f4
+# ---------- SQS AWS CLI ------------
+# aws configure (colocar qualquer info, output type = json e region = sa-east-1)
+# aws cli create queue : aws --endpoint="http://localhost:4566" --region=sa-east-1 sqs create-queue --queue-name teste
+# aws cli list queue : aws --endpoint="http://localhost:4566" --region=sa-east-1 sqs list-queues
+# aws cli send queue : aws --endpoint="http://localhost:4566" --region=sa-east-1 sqs send-message --queue-url http://localhost:4566/000000000000/teste --message-body "{\"teste\":\"teste envio\"}"
+# aws cli read queue : aws --endpoint="http://localhost:4566" --region=sa-east-1 sqs receive-message --queue-url http://localhost:4566/000000000000/teste
+
+# ---------- SNS AWS CLI ------------
+# aws cli create topic : aws --endpoint-url=http://localhost:4566 sns create-topic --name {NOME_DO_TOPICO}
+# aws cli list topics : aws --endpoint-url=http://localhost:4566 sns list-topics
+# aws cli subscribe in topic: aws --endpoint-url=http://localhost:4566 sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:{NOME_DO_TOPICO} --protocol sqs --notification-endpoint http://localhost:4566/000000000000/{NOME_DA_QUEUE}
+# aws cli list subscriptions in topic : aws --endpoint-url=http://localhost:4566 sns list-subscriptions
+# aws cli public message in topic : aws --endpoint-url=http://localhost:4566 sns publish  --topic-arn arn:aws:sns:us-east-1:000000000000:{NOME_DO_TOPICO} --message 'Welcome to Topic!'
